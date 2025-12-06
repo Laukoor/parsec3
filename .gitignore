@@ -1,0 +1,9 @@
+**/*.o
+**/*.d
+**/obj
+**/inst
+**/run
+log
+**/build-info
+
+!**/lib

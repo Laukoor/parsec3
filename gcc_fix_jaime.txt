@@ -1,0 +1,135 @@
+Add to gcc.bldconf: std=gnu++11 and std=gnu11 (gnu++98 would be ideal, but doesn't compile with gcc-11.) 
+
+
+Bodytrack: 
+All the files inside TrackingBenchmark/threads/*: 
+    Barrier.h/.ccp 
+    RWLock.h/.ccp 
+    Mutex.h/.cpp 
+    Thread.h/.cpp 
+    Condition.h/.cpp 
+    WorkerGroup.h 
+Fix (Issue with dynamic exception specification -> got deprecated) 
+    When extended of std::exception: replace "throw()" in function "what" by noexcept 
+    e.g. (WorkerGroup.h) 
+	Virtual const char *what() const throw() {return "Unsepcified worker group exception";} 
+	--------------------------------- 
+	Virtual const char *what() const noexcept {return "Unsepcified worker group exception";} 
+
+    Other function with some "throw(…)" inside their function signature -> just remove it in the .h and .cpp file 
+    e.g. (Condition.h) 
+	Condition(Mutex &) throw(CondException) 
+	-------------------- 
+	Condition(Mutex &) 
+			 
+
+Dedup: 
+Pkgs/libs/ssl/src/Makefile.org 
+    Install: all install_docs install_sw 
+    ------------------------------------------- 
+    Install: all install_sw 
+
+Encoder.c 
+    Config_t * conf; 
+			 
+    Struct hashtable *cache; 
+    --------------------- 
+    Extern config_t * conf; 
+			 
+    Extern struct hashtable *cache; 
+
+Decoder.c 
+    Config_t * conf; 
+    -------------------- 
+    Extern config_t * conf; 
+
+
+Facesim: 
+    FILE_UTILITIES.h 
+	Return Std::ifstream (filename.c_str()) != 0 
+	------------------------------------------------- 
+	std::ifstream ifs (filename.c_str()); 
+	Return ifs.good(); 
+
+	=========================== 
+
+	Return Std::ofstream (filename.c_str()) != 0 
+	------------------------------------------------- 
+	std::ofstream ofs (filename.c_str()); 
+	Return ofs.good(); 
+
+    FILE_UTILITIES.cpp 
+	Return std::ifstream (dirname.c_str()); 
+	---------------------------------------------------- 
+	Std::ifstream ifs(dirname.c_str()); 
+	Return ifs.good(); 
+ 
+
+Ferret 
+Inside the src folder 
+find ./ -type f -exec sed -i 's/\ HUGE/\ HUGE_VALF/g' {} \;  
+Lots of file use "HUGE" -> should be "HUGE_VALF". 
+(Probably some old macro that has been deprecated of the math.h header.) 
+
+
+Raytrace: 
+sudo apt-get install libxmu-dev libxi-dev 
+
+Swaptions: 
+    HJM_SimPath_Forward_Blocking.cpp 
+	#include "tbb/task_scheduler_init.h" 
+	----------------- 
+	// #include "tbb/task_scheduler_init.h" 
+
+
+    HJM_Securities.cpp 
+	#include "tbb/task_scheduler_init.h" 
+	----------------- 
+	// #include "tbb/task_scheduler_init.h" 
+	
+	================================ 
+	
+	Tbb:task_scheduler_init init(nThreads); 
+	-------------------- 
+	//tbb:task_scheduler_init init(nThreads); 
+	
+	================================ 
+	
+	(parm*) memory_parm.allocate(sizeof(parm)*nSwaptions, NULL); 
+	------------------------ 
+	(Parm *) memory_parm.allocate(nSwaptions); 
+
+
+X264: 
+    Configure 
+	Asm="yes" 
+	------------- 
+	Asm="no" 
+
+(probleem met linker, gcc compileert met PIE maar de asm niet, wat voor mismatchen zorgt.) 
+
+ 
+NetDedup: 
+    Pkgs/libs/uptcpip/src/include/sys/bsd__types.h 
+	__mbstate_t defined (2 times) 
+	---------------------------- 
+	____mbstate_t defined  
+
+ 
+    Pkgs/netapps/netdedup/src/server/encoder.c 
+	Config_t * conf; 
+	Struct hashtable *cache; 
+	--------------------- 
+	Extern config_t * conf; 
+	Extern struct hashtable *cache; 
+
+    Pkgs/netapps/netdedup/src/server/decoder.c 
+	Config_t * conf; 
+	-------------------- 
+	Extern config_t * conf; 
+
+
+Netferret: 
+Inside netapps/netferret/src/server/src and netapps/netferret/src/server/benchmark: 
+find ./ -type f -exec sed -i 's/\ HUGE/\ HUGE_VALF/g' {} \;  
+(same reason as ferret) 
