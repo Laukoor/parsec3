@@ -30,6 +30,8 @@
   #include "sparc/atomic.h"
 #elif defined(__ia64__) || defined(__ia64) || defined(ia64) || defined(__IA64__)
   #include "ia64/atomic.h"
+#elif defined(__riscv) || defined(__riscv__) || defined(__riscv64)
+#  include "riscv/atomic.h"
 #else
   #error Architecture not supported by atomic.h
 #endif
